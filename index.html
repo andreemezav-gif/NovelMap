@@ -11,7 +11,8 @@
             padding: 0;
             height: 100%;
             width: 100%;
-            background-color: #0b0d0f; /* Color oscuro que combina con el mapa */
+            /* Se cambió el fondo a un café muy oscuro para disimular las franjas y que se funda con el mapa */
+            background-color: #1a120c; 
         }
         #controles-musica {
             position: fixed;
@@ -25,6 +26,10 @@
             border: 2px solid #c5a059;
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
             line-height: 1;
+        }
+        /* Oculta forzosamente la atribución de Leaflet y la bandera */
+        .leaflet-control-attribution {
+            display: none !important;
         }
     </style>
 </head>
@@ -49,9 +54,10 @@
 
         var map = L.map('map', {
             crs: L.CRS.Simple,
-            minZoom: 0,   // Cambiado a 0 para que no se vea tanto fondo negro
-            maxZoom: 2,
-            attributionControl: false
+            minZoom: 0,
+            maxZoom: 3, // Aumentado ligeramente para permitir acercarse más
+            attributionControl: false,
+            zoomSnap: 0.1 // Permite ajustes de zoom más suaves
         });
 
         var bounds = [[0, 0], [alto, ancho]];
@@ -60,25 +66,31 @@
         // Centramos y forzamos el zoom inicial
         map.fitBounds(bounds);
         map.setMaxBounds(bounds);
-        map.setZoom(0); // Esto hace que se vea más grande al cargar
 
-        // 2. MARCADOR
-        L.marker([372, 1057]).addTo(map)
-            .bindPopup("<b>Dominio Calverian</b><br>La Nueva Casa de Moi.");
+        // EL MARCADOR AZUL FUE ELIMINADO DE AQUÍ
 
-        // 3. FUNCIÓN DE MÚSICA (Esto es lo que faltaba)
+        // 2. FUNCIÓN DE MÚSICA
         var musica = document.getElementById("miMusica");
         var icono = document.getElementById("icono-musica");
 
         function toggleMusica() {
             if (musica.paused) {
-                musica.play();
-                icono.innerHTML = "🔊";
+                // El .catch ayuda a evitar errores en la consola si el navegador bloquea la acción
+                let playPromise = musica.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                        icono.innerHTML = "🔊";
+                    }).catch(error => {
+                        console.log("El navegador bloqueó la reproducción: ", error);
+                    });
+                }
             } else {
                 musica.pause();
                 icono.innerHTML = "🔇";
             }
         }
     </script>
+</body>
+</html>
 </body>
 </html>
