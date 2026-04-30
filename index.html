@@ -16,7 +16,16 @@
     </style>
 </head>
 <body>
+<!-- Reproductor de música -->
+<audio id="miMusica" loop>
+    <source src="musica.mp3" type="audio/mpeg">
+    Tu navegador no soporta el elemento de audio.
+</audio>
 
+<!-- Botón flotante para controlar el sonido -->
+<div id="controles-musica" style="position: fixed; top: 20px; right: 20px; z-index: 1000; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 50%; cursor: pointer; border: 1px solid white;">
+    <span id="icono-musica" onclick="toggleMusica()" style="font-size: 24px;">🔇</span>
+</div>
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -28,10 +37,10 @@
             maxZoom: 2
         });
 
-        var ancho = 1408; 
-        var alto = 768;  
+        var ancho = 2114; 
+        var alto = 744;  
         // Asegúrate de que tu imagen se llame exactamente así en GitHub
-        var url = 'mapa.png'; 
+        var url = 'map.png'; 
 
         // 2. LA SOLUCIÓN: Definimos los límites usando directamente tus píxeles [Y, X]
         var bounds = [[0, 0], [alto, ancho]];
