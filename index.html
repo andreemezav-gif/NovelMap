@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de mi Novela</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body, html, #map {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            background-color: #000000; /* Fondo negro para que resalte el mapa */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Configuramos el mapa para usar coordenadas planas de imagen
+        var map = L.map('map', {
+            crs: L.CRS.Simple,
+            minZoom: -2, // Permite alejar la cámara bastante
+            maxZoom: 2   // Permite acercar la cámara
+        });
+
+        // 🔴 ATENCIÓN AQUÍ: Cambia estos números por los píxeles reales de tu imagen
+        var ancho = 1408; // Ancho de tu imagen
+        var alto = 768;  // Alto de tu imagen
+        var url = 'mapa.jpg'; // El nombre exacto de tu imagen
+
+        // Calculamos los bordes para que la cámara no se salga de la imagen
+        var southWest = map.unproject([0, alto], map.getMaxZoom()-1);
+        var northEast = map.unproject([ancho, 0], map.getMaxZoom()-1);
+        var bounds = new L.LatLngBounds(southWest, northEast);
+
+        // Colocamos tu imagen como fondo interactivo
+        L.imageOverlay(url, bounds).addTo(map);
+
+        // Le decimos a la cámara que se centre en los bordes
+        map.setMaxBounds(bounds);
+        map.fitBounds(bounds);
+
+        // EJEMPLO DE MARCADOR INTERACTIVO:
+        // Los números entre corchetes son las coordenadas (Y, X). 
+        // Cámbialas probando hasta que el pin caiga donde quieres.
+        L.marker([-500, 800]).addTo(map).bindPopup("<b>La Nueva Casa</b><br>Refugio seguro tras el ataque.");
+        
+    </script>
+</body>
+</html>
