@@ -11,51 +11,74 @@
             padding: 0;
             height: 100%;
             width: 100%;
-            background-color: #000000;
+            background-color: #0b0d0f; /* Color oscuro que combina con el mapa */
+        }
+        #controles-musica {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0,0,0,0.8);
+            padding: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #c5a059;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            line-height: 1;
         }
     </style>
 </head>
 <body>
-<!-- Reproductor de música -->
-<audio id="miMusica" loop>
-    <source src="musica.mp3" type="audio/mpeg">
-    Tu navegador no soporta el elemento de audio.
-</audio>
 
-<!-- Botón flotante para controlar el sonido -->
-<div id="controles-musica" style="position: fixed; top: 20px; right: 20px; z-index: 1000; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 50%; cursor: pointer; border: 1px solid white;">
-    <span id="icono-musica" onclick="toggleMusica()" style="font-size: 24px;">🔇</span>
-</div>
+    <audio id="miMusica" loop>
+        <source src="musica.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="controles-musica" onclick="toggleMusica()">
+        <span id="icono-musica" style="font-size: 24px;">🔇</span>
+    </div>
+
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // 1. Configuramos el mapa para usar coordenadas planas
-        var map = L.map('map', {
-            crs: L.CRS.Simple,
-            minZoom: -3, // Un poco más de margen para alejar
-            maxZoom: 2
-        });
-
+        // 1. CONFIGURACIÓN DEL MAPA
         var ancho = 2114; 
         var alto = 744;  
-        // Asegúrate de que tu imagen se llame exactamente así en GitHub
-        var url = 'map.png'; 
+        var url = 'map.png'; // Nombre exacto según tu captura
 
-        // 2. LA SOLUCIÓN: Definimos los límites usando directamente tus píxeles [Y, X]
+        var map = L.map('map', {
+            crs: L.CRS.Simple,
+            minZoom: 0,   // Cambiado a 0 para que no se vea tanto fondo negro
+            maxZoom: 2,
+            attributionControl: false
+        });
+
         var bounds = [[0, 0], [alto, ancho]];
-
-        // 3. Colocamos tu imagen
         L.imageOverlay(url, bounds).addTo(map);
 
-        // 4. Forzamos a la cámara a centrarse exactamente en esos límites
+        // Centramos y forzamos el zoom inicial
         map.fitBounds(bounds);
         map.setMaxBounds(bounds);
+        map.setZoom(0); // Esto hace que se vea más grande al cargar
 
-        // 5. MARCADOR INTERACTIVO
-        // Lo puse en [384, 704] para que aparezca justo en el centro del mapa
-        L.marker([384, 704]).addTo(map).bindPopup("<b>La Nueva Casa de Moi</b><br>El refugio de la familia tras lo sucedido con Ulfric. Ojalá Thief y Rafita traigan provisiones.");
-        
+        // 2. MARCADOR
+        L.marker([372, 1057]).addTo(map)
+            .bindPopup("<b>Dominio Calverian</b><br>La Nueva Casa de Moi.");
+
+        // 3. FUNCIÓN DE MÚSICA (Esto es lo que faltaba)
+        var musica = document.getElementById("miMusica");
+        var icono = document.getElementById("icono-musica");
+
+        function toggleMusica() {
+            if (musica.paused) {
+                musica.play();
+                icono.innerHTML = "🔊";
+            } else {
+                musica.pause();
+                icono.innerHTML = "🔇";
+            }
+        }
     </script>
 </body>
 </html>
