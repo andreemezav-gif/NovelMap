@@ -11,7 +11,7 @@
             padding: 0;
             height: 100%;
             width: 100%;
-            background-color: #000000; /* Fondo negro para que resalte el mapa */
+            background-color: #000000;
         }
     </style>
 </head>
@@ -21,34 +21,31 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Configuramos el mapa para usar coordenadas planas de imagen
+        // 1. Configuramos el mapa para usar coordenadas planas
         var map = L.map('map', {
             crs: L.CRS.Simple,
-            minZoom: -2, // Permite alejar la cámara bastante
-            maxZoom: 2   // Permite acercar la cámara
+            minZoom: -3, // Un poco más de margen para alejar
+            maxZoom: 2
         });
 
-        // 🔴 ATENCIÓN AQUÍ: Cambia estos números por los píxeles reales de tu imagen
-        var ancho = 1408; // Ancho de tu imagen
-        var alto = 768;  // Alto de tu imagen
-        var url = 'mapa.png'; // El nombre exacto de tu imagen
+        var ancho = 1408; 
+        var alto = 768;  
+        // Asegúrate de que tu imagen se llame exactamente así en GitHub
+        var url = 'mapa.png'; 
 
-        // Calculamos los bordes para que la cámara no se salga de la imagen
-        var southWest = map.unproject([0, alto], map.getMaxZoom()-1);
-        var northEast = map.unproject([ancho, 0], map.getMaxZoom()-1);
-        var bounds = new L.LatLngBounds(southWest, northEast);
+        // 2. LA SOLUCIÓN: Definimos los límites usando directamente tus píxeles [Y, X]
+        var bounds = [[0, 0], [alto, ancho]];
 
-        // Colocamos tu imagen como fondo interactivo
+        // 3. Colocamos tu imagen
         L.imageOverlay(url, bounds).addTo(map);
 
-        // Le decimos a la cámara que se centre en los bordes
-        map.setMaxBounds(bounds);
+        // 4. Forzamos a la cámara a centrarse exactamente en esos límites
         map.fitBounds(bounds);
+        map.setMaxBounds(bounds);
 
-        // EJEMPLO DE MARCADOR INTERACTIVO:
-        // Los números entre corchetes son las coordenadas (Y, X). 
-        // Cámbialas probando hasta que el pin caiga donde quieres.
-        L.marker([-500, 800]).addTo(map).bindPopup("<b>La Nueva Casa</b><br>Refugio seguro tras el ataque.");
+        // 5. MARCADOR INTERACTIVO
+        // Lo puse en [384, 704] para que aparezca justo en el centro del mapa
+        L.marker([384, 704]).addTo(map).bindPopup("<b>La Nueva Casa de Moi</b><br>El refugio de la familia tras lo sucedido con Ulfric. Ojalá Thief y Rafita traigan provisiones.");
         
     </script>
 </body>
