@@ -73,25 +73,35 @@
         }
 
         /* El Pergamino animado */
-        #pergamino {
-            width: 0%; 
-            height: 85%;
-            background: url('pergamino.png') no-repeat center center;
-            background-size: 100% 100%;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 60px 80px;
-            box-sizing: border-box;
-            overflow: hidden;
-            transition: width 0.8s ease-in-out;
-        }
+     /* --- ACTUALIZADO: El Pergamino con proporciones correctas --- */
+#pergamino {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Centrado vertical completo del contenido */
+    
+    /* MODIFICADO: Dimensiones más equilibradas */
+    width: 0%; 
+    height: 75%; /* Ligeramente menos alto */
+    
+    /* MODIFICADO: Imagen mantiene proporciones (sin estirarse) */
+    background: url('pergamino.png') no-repeat center center;
+    background-size: cover; /* Solución clave: la imagen cubre el área manteniendo su aspecto */
+    
+    position: relative;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
+    overflow: hidden;
+    transition: width 0.8s ease-in-out;
+    box-sizing: border-box;
+    
+    /* MODIFICADO: Mucho más padding para que el contenido no toque los bordes enrollados */
+    padding: 80px 120px; 
+}
 
-        #pergamino.abierto {
-            width: 90%; /* Ajusta esto si quieres que sea más o menos ancho */
-        }
+#pergamino.abierto {
+    /* MODIFICADO: Ancho más equilibrado */
+    width: 80%; /* Ajusta esto (ej. 75% o 85%) para encontrar el punto justo con tu imagen */
+}
 
         /* Contenido del texto */
         #contenido-cronicas {
