@@ -83,56 +83,57 @@
             align-items: center;
         }
 
-        /* El Pergamino animado - ACTUALIZADO: Proporciones reales (Contain) */
-        #pergamino {
-            width: 0%; 
-            height: 80%;
-            background: url('pergamino.png') no-repeat center center;
-            background-size: contain; 
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            padding: 80px 140px; 
-            box-sizing: border-box;
-            transition: width 0.6s ease-in-out;
-            overflow: hidden;
-        }
+       /* --- AJUSTE DE PRECISIÓN: El Pergamino y su Contenido --- */
+#pergamino {
+    width: 0%; 
+    height: 80%;
+    background: url('pergamino.webp') no-repeat center center;
+    background-size: contain; /* Mantiene el pergamino entero sin deformar */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    
+    /* CAMBIO CLAVE: Aumentamos padding lateral para no tocar los rollos 
+       y padding superior para que el título no se corte */
+    padding: 110px 180px; 
+    
+    box-sizing: border-box;
+    transition: width 0.6s ease-in-out;
+    overflow: hidden;
+}
 
-        #pergamino.abierto {
-            width: 95%; 
-        }
+#pergamino.abierto {
+    width: 90%; /* Un poco menos que antes para que no se pegue a los bordes de la pantalla */
+}
 
-        /* Contenido del texto - ACTUALIZADO: Alineado a la izquierda */
-        #contenido-cronicas {
-            opacity: 0;
-            width: 100%;
-            text-align: left; 
-            color: #2b1d0e;
-            font-family: 'Crimson Text', serif;
-            transition: opacity 0.5s ease 0.6s;
-        }
+#contenido-cronicas {
+    opacity: 0;
+    width: 100%;
+    max-width: 800px; /* Limitamos el ancho del texto para que se mantenga al centro */
+    margin: 0 auto;   /* Centra el bloque de texto dentro del área segura */
+    text-align: left; 
+    color: #2b1d0e;
+    font-family: 'Crimson Text', serif;
+    transition: opacity 0.5s ease 0.6s;
+}
 
-        #pergamino.abierto #contenido-cronicas {
-            opacity: 1;
-        }
+/* Ajuste fino del título para que no flote muy arriba */
+#contenido-cronicas h1 {
+    font-family: 'MedievalSharp', cursive;
+    font-size: 38px;
+    margin-top: 10px; 
+    margin-bottom: 20px;
+    border-bottom: 2px dashed rgba(93, 64, 55, 0.3);
+    padding-bottom: 10px;
+}
 
-        h1 {
-            font-family: 'MedievalSharp', cursive;
-            font-size: 40px;
-            margin-top: 0;
-            margin-bottom: 5px;
-            border-bottom: 2px dashed rgba(93, 64, 55, 0.3);
-            padding-bottom: 10px;
-        }
-
-        /* Diseño de la Biblioteca/Timeline - ACTUALIZADO: Inicio a la izquierda */
-        .seccion-biblioteca {
-            display: flex;
-            justify-content: flex-start; 
-            gap: 50px;
-            margin-top: 30px;
-            padding-left: 10px;
-        }
+/* Alineación de tus libros/capítulos */
+.seccion-biblioteca {
+    display: flex;
+    justify-content: flex-start; 
+    gap: 40px;
+    margin-top: 20px;
+}
 
         .entrada-libro {
             background: rgba(0, 0, 0, 0.05); 
