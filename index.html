@@ -11,9 +11,10 @@
             padding: 0;
             height: 100%;
             width: 100%;
-            /* Se cambió el fondo a un café muy oscuro para disimular las franjas y que se funda con el mapa */
             background-color: #1a120c; 
         }
+
+        /* Botón de Música */
         #controles-musica {
             position: fixed;
             top: 20px;
@@ -27,7 +28,78 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
             line-height: 1;
         }
-        /* Oculta forzosamente la atribución de Leaflet y la bandera */
+
+        /* --- NUEVO: Botón de Crónicas --- */
+        #boton-cronicas {
+            position: fixed;
+            top: 20px;
+            left: 20px; /* Al lado opuesto de la música */
+            z-index: 1000;
+            background: rgba(0,0,0,0.8);
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 2px solid #c5a059;
+            color: #c5a059;
+            font-family: 'Georgia', serif;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        /* --- NUEVO: Capa de fondo (Overlay) --- */
+        #overlay-cronicas {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000; /* Por encima de todo */
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- NUEVO: El Pergamino --- */
+        #pergamino {
+            width: 0%; /* Empieza cerrado para la animación */
+            height: 80%;
+            background-color: #e2cba1; /* Color papel viejo */
+            border: 2px solid #5d4037;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            overflow: hidden;
+            transition: width 0.8s ease-in-out; /* Animación de apertura */
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        #pergamino.abierto {
+            width: 80%; /* Ancho final al abrirse */
+        }
+
+        /* Contenido dentro del pergamino */
+        #contenido-cronicas {
+            opacity: 0;
+            transition: opacity 0.5s ease 0.8s; /* Aparece después de que abra el pergamino */
+            color: #2b1d0e;
+            font-family: 'Georgia', serif;
+        }
+
+        #pergamino.abierto #contenido-cronicas {
+            opacity: 1;
+        }
+
+        .boton-cerrar {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
         .leaflet-control-attribution {
             display: none !important;
         }
@@ -43,45 +115,81 @@
         <span id="icono-musica" style="font-size: 24px;">🔇</span>
     </div>
 
+    <div id="boton-cronicas" onclick="abrirCronicas()">📜 CRÓNICAS</div>
+
+    <div id="overlay-cronicas">
+        <div id="pergamino">
+            <span class="boton-cerrar" onclick="cerrarCronicas()">✖</span>
+            <div id="contenido-cronicas">
+                <h1 style="border-bottom: 2px solid #5d4037;">Crónicas del Dominio</h1>
+                
+                <div id="linea-tiempo" style="margin-top: 30px;">
+                    <div class="entrada" style="width: 250px;">
+                        <h3>El Dominio de Sangre</h3>
+                        <p>Finales de la era 1</p>
+                        <button>Leer PDF</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // 1. CONFIGURACIÓN DEL MAPA
+        // ... (Tu configuración de mapa existente se mantiene igual)
         var ancho = 2114; 
         var alto = 744;  
-        var url = 'map.png'; // Nombre exacto según tu captura
+        var url = 'map.png'; 
 
         var map = L.map('map', {
             crs: L.CRS.Simple,
             minZoom: 0,
-            maxZoom: 3, // Aumentado ligeramente para permitir acercarse más
+            maxZoom: 3,
             attributionControl: false,
-            zoomSnap: 0.1 // Permite ajustes de zoom más suaves
+            zoomSnap: 0.1 
         });
 
         var bounds = [[0, 0], [alto, ancho]];
         L.imageOverlay(url, bounds).addTo(map);
-
-        // Centramos y forzamos el zoom inicial
         map.fitBounds(bounds);
         map.setMaxBounds(bounds);
 
-        // EL MARCADOR AZUL FUE ELIMINADO DE AQUÍ
+        // --- NUEVAS FUNCIONES PARA CRÓNICAS ---
+        function abrirCronicas() {
+            const overlay = document.getElementById('overlay-cronicas');
+            const pergamino = document.getElementById('pergamino');
+            
+            overlay.style.display = 'flex'; // Muestra el fondo oscuro
+            setTimeout(() => {
+                pergamino.classList.add('abierto'); // Inicia la animación de apertura
+            }, 10);
+        }
 
-        // 2. FUNCIÓN DE MÚSICA
+        function cerrarCronicas() {
+            const pergamino = document.getElementById('pergamino');
+            const overlay = document.getElementById('overlay-cronicas');
+            
+            pergamino.classList.remove('abierto'); // Cierra el pergamino
+            setTimeout(() => {
+                overlay.style.display = 'none'; // Oculta el fondo tras la animación
+            }, 800);
+        }
+
+        // --- FUNCIÓN DE MÚSICA (Igual que la tuya) ---
         var musica = document.getElementById("miMusica");
         var icono = document.getElementById("icono-musica");
 
         function toggleMusica() {
             if (musica.paused) {
-                // El .catch ayuda a evitar errores en la consola si el navegador bloquea la acción
                 let playPromise = musica.play();
                 if (playPromise !== undefined) {
                     playPromise.then(_ => {
                         icono.innerHTML = "🔊";
                     }).catch(error => {
-                        console.log("El navegador bloqueó la reproducción: ", error);
+                        console.log("Error: ", error);
                     });
                 }
             } else {
@@ -90,7 +198,5 @@
             }
         }
     </script>
-</body>
-</html>
 </body>
 </html>
