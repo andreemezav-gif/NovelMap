@@ -20,7 +20,7 @@
             overflow: hidden;
         }
 
-        /* Botón de Música (Derecha) - ACTUALIZADO: Estilo serio y medieval */
+        /* Botón de Música (Derecha) - Estilo serio y medieval */
         #controles-musica {
             position: fixed;
             top: 20px;
@@ -68,7 +68,7 @@
             color: black;
         }
 
-        /* Pantalla de fondo al abrir crónicas - ACTUALIZADO: Desenfoque (Blur) */
+        /* Pantalla de fondo al abrir crónicas - Desenfoque (Blur) */
         #overlay-cronicas {
             display: none;
             position: fixed;
@@ -83,57 +83,57 @@
             align-items: center;
         }
 
-       /* --- AJUSTE DE PRECISIÓN: El Pergamino y su Contenido --- */
-#pergamino {
-    width: 0%; 
-    height: 80%;
-    background: url('pergamino.webp') no-repeat center center;
-    background-size: contain; /* Mantiene el pergamino entero sin deformar */
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    
-    /* CAMBIO CLAVE: Aumentamos padding lateral para no tocar los rollos 
-       y padding superior para que el título no se corte */
-    padding: 110px 180px; 
-    
-    box-sizing: border-box;
-    transition: width 0.6s ease-in-out;
-    overflow: hidden;
-}
+        /* --- AJUSTE DE PRECISIÓN: El Pergamino y su Contenido --- */
+        #pergamino {
+            width: 0%; 
+            height: 80%;
+            background: url('pergamino.png') no-repeat center center;
+            background-size: contain; /* Mantiene el pergamino entero sin deformar */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            
+            /* Aumentamos padding lateral para no tocar los rollos 
+               y padding superior para que el título no se corte */
+            padding: 110px 180px; 
+            
+            box-sizing: border-box;
+            transition: width 0.6s ease-in-out;
+            overflow: hidden;
+        }
 
-#pergamino.abierto {
-    width: 90%; /* Un poco menos que antes para que no se pegue a los bordes de la pantalla */
-}
+        #pergamino.abierto {
+            width: 90%; /* Un poco menos para que no se pegue a los bordes de la pantalla */
+        }
 
-#contenido-cronicas {
-    opacity: 0;
-    width: 100%;
-    max-width: 800px; /* Limitamos el ancho del texto para que se mantenga al centro */
-    margin: 0 auto;   /* Centra el bloque de texto dentro del área segura */
-    text-align: left; 
-    color: #2b1d0e;
-    font-family: 'Crimson Text', serif;
-    transition: opacity 0.5s ease 0.6s;
-}
+        #contenido-cronicas {
+            opacity: 0;
+            width: 100%;
+            max-width: 800px; /* Limitamos el ancho del texto para que se mantenga al centro */
+            margin: 0 auto;   /* Centra el bloque de texto dentro del área segura */
+            text-align: left; 
+            color: #2b1d0e;
+            font-family: 'Crimson Text', serif;
+            transition: opacity 0.5s ease 0.6s;
+        }
 
-/* Ajuste fino del título para que no flote muy arriba */
-#contenido-cronicas h1 {
-    font-family: 'MedievalSharp', cursive;
-    font-size: 38px;
-    margin-top: 10px; 
-    margin-bottom: 20px;
-    border-bottom: 2px dashed rgba(93, 64, 55, 0.3);
-    padding-bottom: 10px;
-}
+        /* Ajuste fino del título para que no flote muy arriba */
+        #contenido-cronicas h1 {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 38px;
+            margin-top: 10px; 
+            margin-bottom: 20px;
+            border-bottom: 2px dashed rgba(93, 64, 55, 0.3);
+            padding-bottom: 10px;
+        }
 
-/* Alineación de tus libros/capítulos */
-.seccion-biblioteca {
-    display: flex;
-    justify-content: flex-start; 
-    gap: 40px;
-    margin-top: 20px;
-}
+        /* Alineación de tus libros/capítulos */
+        .seccion-biblioteca {
+            display: flex;
+            justify-content: flex-start; 
+            gap: 40px;
+            margin-top: 20px;
+        }
 
         .entrada-libro {
             background: rgba(0, 0, 0, 0.05); 
@@ -226,7 +226,7 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // 1. CONFIGURACIÓN DEL MAPA - ACTUALIZADO: Límites de zoom corregidos
+        // 1. CONFIGURACIÓN DEL MAPA - Límites de zoom corregidos y WebP
         var ancho = 2114; 
         var alto = 744;  
         var url = 'map.webp'; 
@@ -264,7 +264,7 @@
             }, 800);
         }
 
-        // 3. FUNCIÓN DE MÚSICA - ACTUALIZADO: Textos en lugar de emojis
+        // 3. FUNCIÓN DE MÚSICA - Textos en lugar de emojis
         var musica = document.getElementById("miMusica");
         var icono = document.getElementById("icono-musica");
 
