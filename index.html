@@ -3,111 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa de mi Novela - Crónicas</title>
+    <title>Mapa de mi Novela - Crónicas del Dominio</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=MedievalSharp&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
-        /* Estilos Base */
+        /* --- ESTILOS BASE --- */
         body, html, #map {
             margin: 0; padding: 0; height: 100%; width: 100%;
-            background-color: #1a120c; overflow: hidden;
+            background-color: #0d0d0d; overflow: hidden;
         }
 
-        /* 1. Botón de Música (Restaurado - Arriba Derecha) */
+        /* --- BOTÓN MÚSICA (Arriba Derecha) --- */
         #controles-musica {
             position: fixed; top: 20px; right: 20px; z-index: 1000;
-            background: rgba(0,0,0,0.8); padding: 10px 20px;
-            border-radius: 5px; cursor: pointer;
+            background: rgba(0,0,0,0.85); padding: 10px 18px;
             border: 2px solid #c5a059; color: #c5a059;
-            font-family: 'MedievalSharp', cursive; font-size: 16px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5); transition: 0.3s;
+            font-family: 'MedievalSharp', cursive; cursor: pointer;
+            border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            transition: 0.3s;
         }
         #controles-musica:hover { background: #c5a059; color: black; }
 
-        /* 2. Botón de Crónicas (Reubicado - Abajo Centro) */
+        /* --- FLECHAS DE NAVEGACIÓN (Norte / Sur) --- */
+        .flecha-viaje {
+            position: fixed; left: 50%; transform: translateX(-50%);
+            z-index: 1000; background: rgba(26, 18, 12, 0.8);
+            border: 2px solid #c5a059; color: #c5a059;
+            padding: 8px 25px; cursor: pointer;
+            font-family: 'MedievalSharp', cursive; border-radius: 5px;
+            display: flex; flex-direction: column; align-items: center;
+            box-shadow: 0 0 15px rgba(0,0,0,0.7); transition: 0.3s;
+        }
+        .flecha-viaje:hover { background: #c5a059; color: black; transform: translateX(-50%) scale(1.1); }
+        
+        #nav-norte { top: 20px; } /* Para ir a Thalor */
+        #nav-sur { bottom: 100px; display: none; } /* Para volver a Calverian */
+
+        /* --- BOTÓN CRÓNICAS (Abajo Centro) --- */
         #boton-cronicas {
             position: fixed; bottom: 30px; left: 50%;
             transform: translateX(-50%); z-index: 1000;
-            background: rgba(26, 18, 12, 0.9); padding: 15px 40px;
-            border-radius: 50px; cursor: pointer;
-            border: 2px solid #c5a059; color: #c5a059;
-            font-family: 'MedievalSharp', cursive; font-size: 22px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8); transition: 0.3s;
-            letter-spacing: 2px;
+            background: rgba(26, 18, 12, 0.95); padding: 14px 45px;
+            border-radius: 50px; border: 2px solid #c5a059; 
+            color: #c5a059; font-family: 'MedievalSharp', cursive;
+            font-size: 22px; cursor: pointer; transition: 0.4s;
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.2);
+            letter-spacing: 1.5px;
         }
         #boton-cronicas:hover { 
             background: #c5a059; color: #1a120c; 
-            transform: translateX(-50%) scale(1.05); 
+            box-shadow: 0 0 30px rgba(197, 160, 89, 0.5);
+            transform: translateX(-50%) scale(1.05);
         }
 
-        /* Fondo oscuro al abrir el pergamino */
+        /* --- OVERLAY Y PERGAMINO --- */
         #overlay-cronicas {
             display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px); z-index: 2000;
+            width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px); z-index: 2000;
             justify-content: center; align-items: center;
         }
 
-        /* 3. --- PERGAMINO REPARADO (Adiós estiramiento) --- */
         #pergamino {
-            width: 0%;
-            max-width: 1000px;
-            aspect-ratio: 16 / 9; /* Proporción clásica para que no se deforme */
+            width: 0%; max-width: 1050px; aspect-ratio: 16 / 9;
             background: url('pergamino.png') no-repeat center center;
-            background-size: 100% 100%;
-            position: relative; display: flex; flex-direction: column;
-            padding: 10% 14%; /* Márgenes ajustados al nuevo tamaño */
-            box-sizing: border-box; transition: width 0.5s ease-in-out;
+            background-size: 100% 100%; position: relative;
+            padding: 9% 13%; box-sizing: border-box; transition: width 0.6s cubic-bezier(0.17, 0.67, 0.83, 0.67);
         }
+        #pergamino.abierto { width: 90vw; }
 
-        #pergamino.abierto {
-            width: 90vw; 
-            max-height: 90vh; /* Evita que crezca más que la pantalla */
-        }
-
-        /* Contenedor del texto con scroll interno */
-        #contenido-cronicas {
+        #contenido-cronicas { 
             opacity: 0; width: 100%; height: 100%;
-            color: #2b1d0e; font-family: 'Crimson Text', serif;
-            transition: opacity 0.5s ease 0.5s;
-            overflow-y: auto;
-            padding-right: 15px; 
+            color: #2b1d0e; font-family: 'Crimson Text', serif; 
+            overflow-y: auto; transition: opacity 0.5s 0.6s;
+            padding-right: 15px;
         }
 
-        /* DISEÑO DE LA BARRA DE SCROLL (Para ocultar la barra blanca fea) */
-        #contenido-cronicas::-webkit-scrollbar { width: 8px; }
+        /* --- BARRA DE SCROLL ESTÉTICA --- */
+        #contenido-cronicas::-webkit-scrollbar { width: 7px; }
         #contenido-cronicas::-webkit-scrollbar-track { background: transparent; }
-        #contenido-cronicas::-webkit-scrollbar-thumb { background: #5d4037; border-radius: 4px; }
-
-        #contenido-cronicas h1 {
-            font-family: 'MedievalSharp', cursive; font-size: clamp(24px, 4vw, 40px);
-            margin: 0 0 15px 0; border-bottom: 2px dashed rgba(93, 64, 55, 0.4);
-            text-align: center; padding-bottom: 10px;
+        #contenido-cronicas::-webkit-scrollbar-thumb { 
+            background: #5d4037; border-radius: 10px; border: 2px solid transparent; 
         }
 
-        .seccion-biblioteca {
-            display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; padding-top: 20px;
-        }
-
-        .entrada-libro {
-            background: rgba(0, 0, 0, 0.05); padding: 20px;
-            border: 1px solid rgba(93, 64, 55, 0.3); border-radius: 5px;
-            width: 250px; text-align: center; transition: 0.3s;
-        }
-        .entrada-libro:hover { background: rgba(0, 0, 0, 0.1); transform: translateY(-3px); }
-
-        .btn-leer {
-            background: #5d4037; color: #e2cba1; padding: 10px 20px;
-            font-family: 'MedievalSharp', cursive; text-decoration: none;
-            display: inline-block; margin-top: 15px; font-size: 16px; border-radius: 3px;
-        }
-        .btn-leer:hover { background: #2b1d0e; }
-
-        .cerrar-x {
-            position: absolute; top: 6%; right: 9%; font-size: 28px;
-            cursor: pointer; color: #5d4037; font-weight: bold; z-index: 100;
+        .cerrar-x { 
+            position: absolute; top: 6%; right: 9%; font-size: 30px; 
+            cursor: pointer; color: #5d4037; font-weight: bold; 
         }
 
         .leaflet-control-attribution { display: none !important; }
@@ -115,25 +98,32 @@
 </head>
 <body>
 
-    <audio id="miMusica" loop>
-        <source src="musica.mp3" type="audio/mpeg">
-    </audio>
-    <div id="controles-musica" onclick="toggleMusica()">
-        <span id="icono-musica">🎵 Música: Pausada</span>
+    <audio id="miMusica" loop><source src="musica.mp3" type="audio/mpeg"></audio>
+    <div id="controles-musica" onclick="toggleMusica()">🎵 Música: Pausada</div>
+
+    <div id="nav-norte" class="flecha-viaje" onclick="irARegion('thalor')">
+        <span>▲ IR AL NORTE ▲</span>
+        <span style="font-size: 11px;">Reino de Thalor</span>
     </div>
 
-    <div id="boton-cronicas" onclick="abrirCronicas()">📜 CRÓNICAS</div>
+    <div id="nav-sur" class="flecha-viaje" onclick="irARegion('calverian')">
+        <span>▼ IR AL SUR ▼</span>
+        <span style="font-size: 11px;">Dominio Calverian</span>
+    </div>
+
+    <div id="boton-cronicas" onclick="abrirCronicas()">📜 ABRIR CRÓNICAS</div>
 
     <div id="overlay-cronicas">
         <div id="pergamino">
             <span class="cerrar-x" onclick="cerrarCronicas()">✖</span>
             <div id="contenido-cronicas">
-                <h1>Crónicas del Dominio</h1>
-                <div class="seccion-biblioteca">
-                    <div class="entrada-libro">
-                        <h3>El Dominio de Sangre</h3>
-                        <p>Finales de la Era I</p>
-                        <a href="novela.pdf" target="_blank" class="btn-leer">Leer Manuscrito</a>
+                <h1 style="text-align:center; font-family:'MedievalSharp'; font-size: 35px; border-bottom: 2px dashed #5d4037; padding-bottom: 10px;">Crónicas del Mundo</h1>
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; padding-top: 20px;">
+                    <div style="background: rgba(0,0,0,0.05); padding: 20px; border: 1px solid #5d4037; width: 260px; text-align: center;">
+                        <h3 style="margin-top:0">El Dominio de Sangre</h3>
+                        <p>Los orígenes de la Era II y la caída de los antiguos reyes.</p>
+                        <a href="novela.pdf" target="_blank" style="background:#5d4037; color:#e2cba1; padding: 10px 20px; text-decoration:none; font-family:'MedievalSharp'">Leer Libro</a>
                     </div>
                 </div>
             </div>
@@ -144,62 +134,75 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // 4. --- CONFIGURACIÓN DEL MAPA ARREGLADA (Sin bordes alejados) ---
-        var ancho = 2114; 
-        var alto = 744;  
-        var urlMapa = 'map.webp'; // Cambia a map.png si no cambiaste el formato del mapa
+        // CONFIGURACIÓN DE REGIONES
+        const regiones = {
+            'calverian': { url: 'map.webp', nombre: 'Dominio Calverian' },
+            'thalor': { url: 'thalor.webp', nombre: 'Reino de Thalor' }
+        };
+
+        const ancho = 2114;
+        const alto = 744;
+        const bounds = [[0, 0], [alto, ancho]];
+        let regionActual = 'calverian';
 
         var map = L.map('map', {
             crs: L.CRS.Simple,
-            minZoom: 0, // Antes estaba en -1, esto evita que se aleje demasiado
+            minZoom: 0,
             maxZoom: 2,
             zoomSnap: 0.1,
             attributionControl: false
         });
 
-        var bounds = [[0, 0], [alto, ancho]];
-        L.imageOverlay(urlMapa, bounds).addTo(map);
-
-        // En lugar de hacer fitBounds (que generaba bordes), iniciamos el mapa centrado y más de cerca
-        map.setView([alto / 2, ancho / 2], 0.5); 
+        // Capa de imagen inicial
+        let capaMapa = L.imageOverlay(regiones[regionActual].url, bounds).addTo(map);
+        map.setView([alto / 2, ancho / 2], 0.5); // Centrado inicial
         map.setMaxBounds(bounds);
 
-        // --- FUNCIONES CRÓNICAS ---
+        // FUNCIÓN DE VIAJE ENTRE MAPAS
+        function irARegion(id) {
+            regionActual = id;
+            
+            // Animación de salida (opcional: podrías añadir un fundido a negro aquí)
+            map.removeLayer(capaMapa);
+            capaMapa = L.imageOverlay(regiones[id].url, bounds).addTo(map);
+
+            // Gestionar Flechas
+            if (id === 'thalor') {
+                document.getElementById('nav-norte').style.display = 'none';
+                document.getElementById('nav-sur').style.display = 'flex';
+            } else {
+                document.getElementById('nav-norte').style.display = 'flex';
+                document.getElementById('nav-sur').style.display = 'none';
+            }
+
+            // Efecto de vuelo suave al centro de la nueva región
+            map.flyTo([alto / 2, ancho / 2], 0.6, { duration: 1.2 });
+        }
+
+        // FUNCIONES CRÓNICAS
         function abrirCronicas() {
-            const overlay = document.getElementById('overlay-cronicas');
-            const pergamino = document.getElementById('pergamino');
-            const contenido = document.getElementById('contenido-cronicas');
-            overlay.style.display = 'flex';
+            document.getElementById('overlay-cronicas').style.display = 'flex';
             setTimeout(() => {
-                pergamino.classList.add('abierto');
-                contenido.style.opacity = "1";
+                document.getElementById('pergamino').classList.add('abierto');
+                document.getElementById('contenido-cronicas').style.opacity = "1";
             }, 10);
         }
 
         function cerrarCronicas() {
-            const pergamino = document.getElementById('pergamino');
-            const contenido = document.getElementById('contenido-cronicas');
-            const overlay = document.getElementById('overlay-cronicas');
-            contenido.style.opacity = "0";
-            pergamino.classList.remove('abierto');
-            setTimeout(() => { overlay.style.display = 'none'; }, 500);
+            document.getElementById('contenido-cronicas').style.opacity = "0";
+            document.getElementById('pergamino').classList.remove('abierto');
+            setTimeout(() => { document.getElementById('overlay-cronicas').style.display = 'none'; }, 600);
         }
 
-        // --- FUNCIÓN MÚSICA RESTAURADA ---
+        // FUNCIÓN MÚSICA
         var musica = document.getElementById("miMusica");
-        var icono = document.getElementById("icono-musica");
-
         function toggleMusica() {
             if (musica.paused) {
-                let playPromise = musica.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(_ => {
-                        icono.innerHTML = "🎵 Música: Sonando";
-                    }).catch(error => { console.log("Error: ", error); });
-                }
+                musica.play();
+                document.getElementById("controles-musica").innerHTML = "🎵 Música: Sonando";
             } else {
                 musica.pause();
-                icono.innerHTML = "🎵 Música: Pausada";
+                document.getElementById("controles-musica").innerHTML = "🎵 Música: Pausada";
             }
         }
     </script>
