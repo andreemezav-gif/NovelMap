@@ -3,18 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa de mi Novela</title>
+    <title>Mapa de mi Novela - Crónicas</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=MedievalSharp&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
     <style>
+        /* Estilos Base */
         body, html, #map {
             margin: 0;
             padding: 0;
             height: 100%;
             width: 100%;
             background-color: #1a120c; 
+            overflow: hidden;
         }
 
-        /* Botón de Música */
+        /* Botón de Música (Derecha) */
         #controles-musica {
             position: fixed;
             top: 20px;
@@ -29,11 +35,11 @@
             line-height: 1;
         }
 
-        /* --- NUEVO: Botón de Crónicas --- */
+        /* Botón de Crónicas (Izquierda) */
         #boton-cronicas {
             position: fixed;
             top: 20px;
-            left: 20px; /* Al lado opuesto de la música */
+            left: 20px;
             z-index: 1000;
             background: rgba(0,0,0,0.8);
             padding: 10px 20px;
@@ -41,62 +47,125 @@
             cursor: pointer;
             border: 2px solid #c5a059;
             color: #c5a059;
-            font-family: 'Georgia', serif;
-            font-weight: bold;
+            font-family: 'MedievalSharp', cursive;
+            font-size: 18px;
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            transition: 0.3s;
         }
 
-        /* --- NUEVO: Capa de fondo (Overlay) --- */
+        #boton-cronicas:hover {
+            background: #c5a059;
+            color: black;
+        }
+
+        /* Pantalla de fondo al abrir crónicas */
         #overlay-cronicas {
-            display: none; /* Oculto por defecto */
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 2000; /* Por encima de todo */
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
             justify-content: center;
             align-items: center;
         }
 
-        /* --- NUEVO: El Pergamino --- */
+        /* El Pergamino animado */
         #pergamino {
-            width: 0%; /* Empieza cerrado para la animación */
-            height: 80%;
-            background-color: #e2cba1; /* Color papel viejo */
-            border: 2px solid #5d4037;
+            width: 0%; 
+            height: 85%;
+            background: url('pergamino.png') no-repeat center center;
+            background-size: 100% 100%;
             position: relative;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
-            overflow: hidden;
-            transition: width 0.8s ease-in-out; /* Animación de apertura */
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 60px 80px;
+            box-sizing: border-box;
+            overflow: hidden;
+            transition: width 0.8s ease-in-out;
         }
 
         #pergamino.abierto {
-            width: 80%; /* Ancho final al abrirse */
+            width: 90%; /* Ajusta esto si quieres que sea más o menos ancho */
         }
 
-        /* Contenido dentro del pergamino */
+        /* Contenido del texto */
         #contenido-cronicas {
             opacity: 0;
-            transition: opacity 0.5s ease 0.8s; /* Aparece después de que abra el pergamino */
+            width: 100%;
+            text-align: center;
             color: #2b1d0e;
-            font-family: 'Georgia', serif;
+            font-family: 'Crimson Text', serif;
+            transition: opacity 0.5s ease 0.8s;
         }
 
         #pergamino.abierto #contenido-cronicas {
             opacity: 1;
         }
 
-        .boton-cerrar {
-            position: absolute;
-            top: 10px;
-            right: 15px;
+        h1 {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 45px;
+            margin-top: 0;
+            border-bottom: 2px dashed #5d4037;
+            padding-bottom: 10px;
+        }
+
+        /* Diseño de la Biblioteca/Timeline */
+        .seccion-biblioteca {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .entrada-libro {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border: 1px solid #5d4037;
+            border-radius: 5px;
+            width: 280px;
+        }
+
+        .entrada-libro h3 {
+            font-family: 'MedievalSharp', cursive;
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .entrada-libro p {
+            font-style: italic;
+            font-size: 18px;
+        }
+
+        .btn-leer {
+            background: #5d4037;
+            color: #e2cba1;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'MedievalSharp', cursive;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 16px;
+            margin-top: 15px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-leer:hover {
+            background: #2b1d0e;
+        }
+
+        .cerrar-x {
+            position: absolute;
+            top: 30px;
+            right: 50px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #5d4037;
             font-weight: bold;
         }
 
@@ -119,18 +188,18 @@
 
     <div id="overlay-cronicas">
         <div id="pergamino">
-            <span class="boton-cerrar" onclick="cerrarCronicas()">✖</span>
+            <span class="cerrar-x" onclick="cerrarCronicas()">✖</span>
             <div id="contenido-cronicas">
-                <h1 style="border-bottom: 2px solid #5d4037;">Crónicas del Dominio</h1>
+                <h1>Crónicas del Dominio</h1>
                 
-                <div id="linea-tiempo" style="margin-top: 30px;">
-                    <div class="entrada" style="width: 250px;">
+                <div class="seccion-biblioteca">
+                    <div class="entrada-libro">
                         <h3>El Dominio de Sangre</h3>
-                        <p>Finales de la era 1</p>
-                        <button>Leer PDF</button>
+                        <p>Finales de la Era I</p>
+                        <a href="novela.pdf" target="_blank" class="btn-leer">Leer Manuscrito</a>
                     </div>
-                </div>
-
+                    
+                    </div>
             </div>
         </div>
     </div>
@@ -139,7 +208,7 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // ... (Tu configuración de mapa existente se mantiene igual)
+        // 1. CONFIGURACIÓN DEL MAPA
         var ancho = 2114; 
         var alto = 744;  
         var url = 'map.png'; 
@@ -154,31 +223,30 @@
 
         var bounds = [[0, 0], [alto, ancho]];
         L.imageOverlay(url, bounds).addTo(map);
+
         map.fitBounds(bounds);
         map.setMaxBounds(bounds);
 
-        // --- NUEVAS FUNCIONES PARA CRÓNICAS ---
+        // 2. FUNCIONES DE CRÓNICAS
         function abrirCronicas() {
             const overlay = document.getElementById('overlay-cronicas');
             const pergamino = document.getElementById('pergamino');
-            
-            overlay.style.display = 'flex'; // Muestra el fondo oscuro
+            overlay.style.display = 'flex';
             setTimeout(() => {
-                pergamino.classList.add('abierto'); // Inicia la animación de apertura
+                pergamino.classList.add('abierto');
             }, 10);
         }
 
         function cerrarCronicas() {
             const pergamino = document.getElementById('pergamino');
             const overlay = document.getElementById('overlay-cronicas');
-            
-            pergamino.classList.remove('abierto'); // Cierra el pergamino
+            pergamino.classList.remove('abierto');
             setTimeout(() => {
-                overlay.style.display = 'none'; // Oculta el fondo tras la animación
+                overlay.style.display = 'none';
             }, 800);
         }
 
-        // --- FUNCIÓN DE MÚSICA (Igual que la tuya) ---
+        // 3. FUNCIÓN DE MÚSICA
         var musica = document.getElementById("miMusica");
         var icono = document.getElementById("icono-musica");
 
