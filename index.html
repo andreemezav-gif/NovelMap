@@ -20,19 +20,29 @@
             overflow: hidden;
         }
 
-        /* Botón de Música (Derecha) */
+        /* Botón de Música (Derecha) - ACTUALIZADO: Estilo serio y medieval */
         #controles-musica {
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 1000;
             background: rgba(0,0,0,0.8);
-            padding: 12px;
-            border-radius: 50%;
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
             border: 2px solid #c5a059;
+            color: #c5a059;
+            font-family: 'MedievalSharp', cursive;
+            font-size: 18px;
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
-            line-height: 1;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        #controles-musica:hover {
+            background: #c5a059;
+            color: black;
         }
 
         /* Botón de Crónicas (Izquierda) */
@@ -58,7 +68,7 @@
             color: black;
         }
 
-        /* Pantalla de fondo al abrir crónicas */
+        /* Pantalla de fondo al abrir crónicas - ACTUALIZADO: Desenfoque (Blur) */
         #overlay-cronicas {
             display: none;
             position: fixed;
@@ -66,51 +76,40 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
             z-index: 2000;
             justify-content: center;
             align-items: center;
         }
 
-        /* El Pergamino animado */
-     /* --- ACTUALIZADO: El Pergamino con proporciones correctas --- */
-#pergamino {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center; /* Centrado vertical completo del contenido */
-    
-    /* MODIFICADO: Dimensiones más equilibradas */
-    width: 0%; 
-    height: 75%; /* Ligeramente menos alto */
-    
-    /* MODIFICADO: Imagen mantiene proporciones (sin estirarse) */
-    background: url('pergamino.png') no-repeat center center;
-    background-size: cover; /* Solución clave: la imagen cubre el área manteniendo su aspecto */
-    
-    position: relative;
-    box-shadow: 0 0 50px rgba(0,0,0,0.8);
-    overflow: hidden;
-    transition: width 0.8s ease-in-out;
-    box-sizing: border-box;
-    
-    /* MODIFICADO: Mucho más padding para que el contenido no toque los bordes enrollados */
-    padding: 80px 120px; 
-}
+        /* El Pergamino animado - ACTUALIZADO: Proporciones reales (Contain) */
+        #pergamino {
+            width: 0%; 
+            height: 80%;
+            background: url('pergamino.png') no-repeat center center;
+            background-size: contain; 
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 80px 140px; 
+            box-sizing: border-box;
+            transition: width 0.6s ease-in-out;
+            overflow: hidden;
+        }
 
-#pergamino.abierto {
-    /* MODIFICADO: Ancho más equilibrado */
-    width: 80%; /* Ajusta esto (ej. 75% o 85%) para encontrar el punto justo con tu imagen */
-}
+        #pergamino.abierto {
+            width: 95%; 
+        }
 
-        /* Contenido del texto */
+        /* Contenido del texto - ACTUALIZADO: Alineado a la izquierda */
         #contenido-cronicas {
             opacity: 0;
             width: 100%;
-            text-align: center;
+            text-align: left; 
             color: #2b1d0e;
             font-family: 'Crimson Text', serif;
-            transition: opacity 0.5s ease 0.8s;
+            transition: opacity 0.5s ease 0.6s;
         }
 
         #pergamino.abierto #contenido-cronicas {
@@ -119,26 +118,34 @@
 
         h1 {
             font-family: 'MedievalSharp', cursive;
-            font-size: 45px;
+            font-size: 40px;
             margin-top: 0;
-            border-bottom: 2px dashed #5d4037;
+            margin-bottom: 5px;
+            border-bottom: 2px dashed rgba(93, 64, 55, 0.3);
             padding-bottom: 10px;
         }
 
-        /* Diseño de la Biblioteca/Timeline */
+        /* Diseño de la Biblioteca/Timeline - ACTUALIZADO: Inicio a la izquierda */
         .seccion-biblioteca {
             display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin-top: 40px;
+            justify-content: flex-start; 
+            gap: 50px;
+            margin-top: 30px;
+            padding-left: 10px;
         }
 
         .entrada-libro {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 20px;
-            border: 1px solid #5d4037;
-            border-radius: 5px;
-            width: 280px;
+            background: rgba(0, 0, 0, 0.05); 
+            padding: 25px;
+            border: 1px solid rgba(93, 64, 55, 0.2);
+            border-radius: 4px;
+            width: 300px;
+            transition: 0.3s;
+        }
+
+        .entrada-libro:hover {
+            background: rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
         }
 
         .entrada-libro h3 {
@@ -191,7 +198,7 @@
     </audio>
 
     <div id="controles-musica" onclick="toggleMusica()">
-        <span id="icono-musica" style="font-size: 24px;">🔇</span>
+        <span id="icono-musica">Música: Pausada</span>
     </div>
 
     <div id="boton-cronicas" onclick="abrirCronicas()">📜 CRÓNICAS</div>
@@ -209,7 +216,7 @@
                         <a href="novela.pdf" target="_blank" class="btn-leer">Leer Manuscrito</a>
                     </div>
                     
-                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -218,15 +225,15 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // 1. CONFIGURACIÓN DEL MAPA
+        // 1. CONFIGURACIÓN DEL MAPA - ACTUALIZADO: Límites de zoom corregidos
         var ancho = 2114; 
         var alto = 744;  
         var url = 'map.png'; 
 
         var map = L.map('map', {
             crs: L.CRS.Simple,
-            minZoom: 0,
-            maxZoom: 3,
+            minZoom: -1, /* Permite alejar más */
+            maxZoom: 1,  /* Evita que se acerque tanto que se pixele */
             attributionControl: false,
             zoomSnap: 0.1 
         });
@@ -256,7 +263,7 @@
             }, 800);
         }
 
-        // 3. FUNCIÓN DE MÚSICA
+        // 3. FUNCIÓN DE MÚSICA - ACTUALIZADO: Textos en lugar de emojis
         var musica = document.getElementById("miMusica");
         var icono = document.getElementById("icono-musica");
 
@@ -265,14 +272,14 @@
                 let playPromise = musica.play();
                 if (playPromise !== undefined) {
                     playPromise.then(_ => {
-                        icono.innerHTML = "🔊";
+                        icono.innerHTML = "Música: Sonando";
                     }).catch(error => {
                         console.log("Error: ", error);
                     });
                 }
             } else {
                 musica.pause();
-                icono.innerHTML = "🔇";
+                icono.innerHTML = "Música: Pausada";
             }
         }
     </script>
